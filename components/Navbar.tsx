@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
 const navItems = [
   { name: "홈", path: "/" },
-  { name: "서비스", path: "/#works" },
   { name: "랩스", path: "/labs" },
   { name: "커뮤니티", path: "/community" },
   { name: "소개", path: "/about" },
@@ -14,44 +12,8 @@ const navItems = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [isWorksActiveByScroll, setIsWorksActiveByScroll] = useState(false);
-
-  useEffect(() => {
-    if (pathname !== "/") {
-      setIsWorksActiveByScroll(false);
-      return;
-    }
-
-    const updateWorksActive = () => {
-      const worksSection = document.getElementById("works");
-      if (!worksSection) {
-        setIsWorksActiveByScroll(false);
-        return;
-      }
-
-      const triggerLine = window.scrollY + window.innerHeight * 0.35;
-      setIsWorksActiveByScroll(triggerLine >= worksSection.offsetTop);
-    };
-
-    updateWorksActive();
-    window.addEventListener("scroll", updateWorksActive, { passive: true });
-    window.addEventListener("resize", updateWorksActive);
-
-    return () => {
-      window.removeEventListener("scroll", updateWorksActive);
-      window.removeEventListener("resize", updateWorksActive);
-    };
-  }, [pathname]);
 
   const isActive = (path: string) => {
-    if (path === "/") {
-      return pathname === "/" && !isWorksActiveByScroll;
-    }
-
-    if (path === "/#works") {
-      return pathname === "/" && isWorksActiveByScroll;
-    }
-
     return pathname === path;
   };
 
