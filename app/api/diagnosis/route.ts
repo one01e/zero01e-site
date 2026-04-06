@@ -213,14 +213,32 @@ export async function POST(request: Request) {
     answers,
   };
 
-  const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
-  const sheetId = process.env.GOOGLE_SHEET_ID;
+  const serviceAccountEmail =
+    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL?.trim() ||
+    process.env.GOOGLE_CLIENT_EMAIL?.trim() ||
+    "";
+  const privateKeyRaw = process.env.GOOGLE_PRIVATE_KEY?.trim() || process.env.GCP_PRIVATE_KEY?.trim() || "";
+  const privateKey = privateKeyRaw.replace(/^"([\s\S]*)"$/, "$1").replace(/\\n/g, "\n");
+  const sheetId =
+    process.env.GOOGLE_SHEET_ID?.trim() ||
+    process.env.GOOGLE_SPREADSHEET_ID?.trim() ||
+    "";
   const sheetRange = process.env.GOOGLE_SHEET_RANGE ?? "Sheet1!A2";
 
   if (!serviceAccountEmail || !privateKey || !sheetId) {
+    const missingEnvKeys = [
+      !serviceAccountEmail ? "GOOGLE_SERVICE_ACCOUNT_EMAIL(or GOOGLE_CLIENT_EMAIL)" : null,
+      !privateKey ? "GOOGLE_PRIVATE_KEY(or GCP_PRIVATE_KEY)" : null,
+      !sheetId ? "GOOGLE_SHEET_ID(or GOOGLE_SPREADSHEET_ID)" : null,
+    ].filter(Boolean);
+
+    console.error("[Diagnosis API] Missing required Google env vars:", missingEnvKeys.join(", "));
+
     return NextResponse.json<DiagnosisSubmissionApiResponse>(
-      { success: false, error: "Google Sheets 환경 변수가 누락되었습니다." },
+      {
+        success: false,
+        error: `Google Sheets 환경 변수가 누락되었습니다. 누락 항목: ${missingEnvKeys.join(", ")}`,
+      },
       { status: 500 }
     );
   }
