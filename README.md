@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ZERO01E Site
 
-## Getting Started
+ZERO01E 브랜딩/컨설팅 메인 웹 프로젝트입니다.
 
-First, run the development server:
+## 구성 요약
+
+- 스택: `Next.js 16 + React 19 + Tailwind v4 + Framer Motion`
+- 핵심 기능: 멀티 페이지 랜딩, 블로그 수익화 진단(26문항), 리드 수집 API(Google Sheets 연동)
+
+## 빠른 시작
+
+### 1) 메인 웹 (Next.js)
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 접속: `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2) 스크립트로 실행/종료
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+./run.sh
+./stop.sh
+```
 
-## Learn More
+## 문서 안내
 
-To learn more about Next.js, take a look at the following resources:
+- 전체 인덱스: `docs/README.md`
+- 구조/스택: `docs/PROJECT_STRUCTURE.md`
+- 개발 현황: `docs/DEVELOPMENT_STATUS.md`
+- 진단 시스템 명세: `docs/DIAGNOSIS_SYSTEM.md`
+- Codex 작업 기준: `docs/CODEX_GUIDE.md`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 현재 상태 스냅샷 (2026-04-06 기준)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 완료: 홈/소개/커뮤니티/랩스/진단/진단결과 페이지와 공통 내비게이션 구성
+- 완료: 진단 점수 계산, 결과 레벨링, 카테고리별 분석 UI, 공유 기능
+- 완료: `/api/diagnosis` 입력 검증 및 Google Sheets 적재
+- 완료: `npm run lint` 통과
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+자세한 내용은 `docs/DEVELOPMENT_STATUS.md`를 참고하세요.

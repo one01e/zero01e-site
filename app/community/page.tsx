@@ -1,25 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { FadeInUp, StaggerGrid, StaggerItem } from "@/components/MotionWrapper";
 import { motion } from "framer-motion";
-import { Bell, CheckCircle2, DollarSign, Gift, Lock, PenTool, Target, TrendingUp, Users } from "lucide-react";
+import { Bell, ChevronDown, Gift, Lock, Target, Users } from "lucide-react";
 import { COMMUNITY_CONTENT, COMMON_CONTENT } from "@/constants/content";
-
-const getCurriculumIcon = (index: number) => {
-  const icons = [
-    <Target key="0" className="h-5 w-5 text-emerald-500" />,
-    <TrendingUp key="1" className="h-5 w-5 text-teal-500" />,
-    <PenTool key="2" className="h-5 w-5 text-cyan-500" />,
-    <CheckCircle2 key="3" className="h-5 w-5 text-emerald-500" />,
-    <DollarSign key="4" className="h-5 w-5 text-teal-500" />,
-  ];
-  return icons[index] || <CheckCircle2 className="h-5 w-5 text-emerald-500" />;
-};
 
 export default function CommunityPage() {
   const { hero, curriculum, benefits, bottomCta } = COMMUNITY_CONTENT;
   const { urls } = COMMON_CONTENT;
+  const [openClass, setOpenClass] = useState<string | null>("클래스 1 [코어]");
 
   return (
     <main className="relative flex w-full flex-col items-center overflow-hidden pb-24">
@@ -70,22 +61,66 @@ export default function CommunityPage() {
           </div>
         </FadeInUp>
 
-        <StaggerGrid className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          {curriculum.items.map((item, idx) => (
-            <StaggerItem key={idx}>
+        <StaggerGrid className="space-y-4">
+          {curriculum.items.map((item) => (
+            <StaggerItem key={item.class}>
               <motion.div
                 whileHover={{ y: -4, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="flex h-full flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-colors hover:border-emerald-200 sm:p-8"
+                className="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-colors hover:border-emerald-200 sm:p-8"
               >
-                <div className="mb-4 flex items-center gap-3 sm:mb-6">
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-2 sm:p-3">{getCurriculumIcon(idx)}</div>
-                  <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-sm font-extrabold text-emerald-600">
-                    {item.week}
-                  </span>
-                </div>
-                <h3 className="mb-2 text-lg font-extrabold text-slate-900 sm:mb-3 sm:text-xl">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                <button
+                  type="button"
+                  disabled={!item.expandable}
+                  onClick={() => setOpenClass((prev) => (prev === item.class ? null : item.class))}
+                  className={`flex w-full items-start justify-between gap-4 text-left ${
+                    item.expandable ? "cursor-pointer" : "cursor-not-allowed"
+                  }`}
+                >
+                  <div className="flex-1">
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-700 sm:text-sm">
+                        {item.class}
+                      </span>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-bold ${
+                          item.expandable ? "bg-teal-50 text-teal-700" : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        {item.state}
+                      </span>
+                    </div>
+                    <h3 className="mb-2 text-lg font-extrabold text-slate-900 sm:text-xl">{item.title}</h3>
+                    <p className="text-sm leading-relaxed text-slate-600">{item.subtitle}</p>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-wide text-emerald-600 sm:text-sm">{item.framework}</p>
+                  </div>
+                  <div
+                    className={`mt-1 rounded-xl border p-2 ${
+                      item.expandable ? "border-emerald-100 bg-emerald-50 text-emerald-600" : "border-slate-200 bg-slate-50 text-slate-400"
+                    }`}
+                  >
+                    {item.expandable ? (
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${openClass === item.class ? "rotate-180" : "rotate-0"}`}
+                      />
+                    ) : (
+                      <Lock className="h-4 w-4" />
+                    )}
+                  </div>
+                </button>
+
+                {item.expandable && openClass === item.class && (
+                  <div className="mt-5 border-t border-slate-100 pt-5">
+                    <ul className="space-y-2 text-sm text-slate-600">
+                      {item.details.map((detail) => (
+                        <li key={detail} className="flex items-start gap-2">
+                          <Target className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
+                          <span>{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </motion.div>
             </StaggerItem>
           ))}
@@ -152,7 +187,7 @@ export default function CommunityPage() {
 
             <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
               <a
-                href={urls.waitlistForm}
+                href={urls.bsclSeason2WaitlistForm}
                 target="_blank"
                 rel="noreferrer"
                 className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-4 text-sm font-bold text-white shadow-lg transition-transform hover:-translate-y-1 sm:w-auto"
@@ -161,7 +196,7 @@ export default function CommunityPage() {
                 {bottomCta.buttonWaitlist}
               </a>
               <a
-                href={urls.waitlistForm}
+                href={urls.bsclOpenTalk}
                 target="_blank"
                 rel="noreferrer"
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-8 py-4 text-sm font-bold text-emerald-600 shadow-sm transition-all hover:bg-emerald-50 sm:w-auto"

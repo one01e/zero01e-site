@@ -1,14 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { FadeInUp, StaggerGrid, StaggerItem } from "@/components/MotionWrapper";
 import { motion } from "framer-motion";
-import { ArrowRight, Bot, Code, Download, FileText, Sparkles } from "lucide-react";
+import { ArrowRight, Bot, Code, FileText, Gauge, Sparkles, X } from "lucide-react";
 import { LABS_CONTENT, COMMON_CONTENT } from "@/constants/content";
+
+type LabsDialogState = {
+  title: string;
+  description: string;
+  note: string;
+};
 
 export default function LabsPage() {
   const { hero, resources, agents, scripts, bottomCta } = LABS_CONTENT;
   const { urls } = COMMON_CONTENT;
+  const [dialog, setDialog] = useState<LabsDialogState | null>(null);
+
+  const openComingSoonDialog = (title: string) => {
+    setDialog({
+      title: "자료 제공 예정 안내",
+      description: `"${title}" 자료는 현재 차후 제공을 준비 중입니다.`,
+      note: "오픈톡에 먼저 입장하시면 더 빠르게 공지와 다양한 실전 정보를 받아보실 수 있습니다.",
+    });
+  };
+
+  const openMembersOnlyDialog = (title: string) => {
+    setDialog({
+      title: "멤버 전용 자료 안내",
+      description: `[블사클]멤버 대상 공유 정보 자료 입니다.\n"${title}"는 현재 멤버 대상 공유 정보로 운영 중입니다.`,
+      note: "오픈톡에 입장해 두시면 공개/모집 안내를 가장 빠르게 받아보실 수 있습니다.",
+    });
+  };
 
   return (
     <main className="relative flex w-full flex-col items-center overflow-hidden pb-24">
@@ -36,6 +60,33 @@ export default function LabsPage() {
         <FadeInUp delay={0.4}>
           <p className="max-w-2xl break-keep text-base leading-relaxed text-slate-600 sm:text-lg">{hero.description}</p>
         </FadeInUp>
+        <FadeInUp delay={0.5}>
+          <Link
+            href="/labs/diagnosis"
+            className="group relative mt-8 inline-flex w-full flex-col items-start gap-0.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg sm:w-auto sm:text-base"
+          >
+            <span className="inline-flex items-center gap-1 text-[11px] font-extrabold tracking-wide sm:text-xs">
+              <motion.span
+                animate={{
+                  color: ["#fde68a", "#bfdbfe", "#86efac", "#fbcfe8", "#fde68a"],
+                  textShadow: [
+                    "0 0 0 rgba(255,255,255,0.0)",
+                    "0 0 10px rgba(255,255,255,0.45)",
+                    "0 0 0 rgba(255,255,255,0.0)",
+                  ],
+                }}
+                transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+              >
+                ✦ 무료 진단 오픈 중
+              </motion.span>
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <Gauge className="h-4 w-4 sm:h-5 sm:w-5" />
+              블로그 수익화 지수 진단 시작
+              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+            </span>
+          </Link>
+        </FadeInUp>
       </section>
 
       <section className="mt-12 w-full max-w-6xl px-5 sm:px-8 lg:px-12">
@@ -62,17 +113,26 @@ export default function LabsPage() {
                   <h3 className="mb-3 text-xl font-extrabold text-slate-900">{item.title}</h3>
                   <p className="break-keep text-sm leading-relaxed text-slate-600">{item.desc}</p>
                 </div>
-                <a
-                  href={urls.waitlistForm}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-8 inline-flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-all group-hover:border-emerald-500 group-hover:bg-emerald-500 group-hover:text-white sm:w-auto"
-                >
-                  <span className="flex items-center gap-2">
-                    <Download className="h-4 w-4" /> 무료로 받기
-                  </span>
-                  <ArrowRight className="-translate-x-2 h-4 w-4 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
-                </a>
+                {item.ctaKind === "internal-link" && item.ctaHref ? (
+                  <Link
+                    href={item.ctaHref}
+                    className="mt-8 inline-flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition-all group-hover:border-emerald-500 group-hover:bg-emerald-500 group-hover:text-white sm:w-auto"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Gauge className="h-4 w-4" /> {item.ctaLabel}
+                    </span>
+                    <ArrowRight className="-translate-x-2 h-4 w-4 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openComingSoonDialog(item.title)}
+                    className="mt-8 inline-flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-3 text-left text-sm font-bold text-slate-700 transition-all group-hover:border-emerald-500 group-hover:bg-emerald-500 group-hover:text-white sm:w-auto"
+                  >
+                    <span className="flex items-center gap-2">{item.ctaLabel}</span>
+                    <ArrowRight className="-translate-x-2 h-4 w-4 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                  </button>
+                )}
               </motion.div>
             </StaggerItem>
           ))}
@@ -103,12 +163,13 @@ export default function LabsPage() {
                   <h3 className="mb-3 text-lg font-extrabold text-slate-900">{agent.title}</h3>
                   <p className="break-keep text-sm leading-relaxed text-slate-600">{agent.desc}</p>
                 </div>
-                <a
-                  href={agent.link}
+                <button
+                  type="button"
+                  onClick={() => openMembersOnlyDialog(agent.title)}
                   className="mt-8 inline-flex items-center text-sm font-bold text-teal-600 transition-colors group-hover:text-teal-700"
                 >
-                  사용해보기 →
-                </a>
+                  {agent.ctaLabel} →
+                </button>
               </motion.div>
             </StaggerItem>
           ))}
@@ -139,12 +200,13 @@ export default function LabsPage() {
                   <h3 className="mb-3 text-lg font-extrabold text-slate-900">{script.title}</h3>
                   <p className="break-keep text-sm leading-relaxed text-slate-600">{script.desc}</p>
                 </div>
-                <a
-                  href={script.link}
+                <button
+                  type="button"
+                  onClick={() => openMembersOnlyDialog(script.title)}
                   className="mt-8 inline-flex items-center text-sm font-bold text-slate-600 transition-colors group-hover:text-slate-900"
                 >
-                  코드 보기 →
-                </a>
+                  {script.ctaLabel} →
+                </button>
               </motion.div>
             </StaggerItem>
           ))}
@@ -175,6 +237,52 @@ export default function LabsPage() {
           </div>
         </FadeInUp>
       </section>
+
+      {dialog && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-900/50 p-4"
+          onClick={() => setDialog(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl sm:p-8"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <h3 className="text-xl font-extrabold text-slate-900">{dialog.title}</h3>
+              <button
+                type="button"
+                onClick={() => setDialog(null)}
+                className="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-50"
+                aria-label="닫기"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{dialog.description}</p>
+            <p className="mt-3 text-sm leading-relaxed text-slate-500">{dialog.note}</p>
+
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setDialog(null)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+              >
+                닫기
+              </button>
+              <a
+                href={urls.bsclOpenTalk}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 px-4 py-2 text-center text-sm font-bold text-white transition hover:-translate-y-0.5"
+              >
+                오픈톡 바로 입장
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -11,9 +11,9 @@ export const HOME_CONTENT = {
       { value: "AI", suffix: "", label: "바이브코딩 및 업무 자동화" },
     ],
     ctas: {
-      primary: "📊 개인 블로그 진단 신청",
-      secondary: "🤝 기업 비즈니스 & 협업 문의",
-      tertiary: "🌱 블사클 커뮤니티 합류",
+      primary: "📝 개인 블로그 진단 신청",
+      secondary: "💬 기업 비즈니스 & 협업 문의",
+      tertiary: "🎓 블사클 멤버 클래스 보기",
     },
   },
   services: {
@@ -45,6 +45,6 @@ export const HOME_CONTENT = {
       "3단계: 개선 방향 제안 (우선순위 & 실행 플랜)",
       "4단계: 필요 시 협업 안내 (콘텐츠 / 운영 / 대행 옵션)",
     ],
-    cta: "무료 진단 시작하기",
+    cta: "블로그 무료 진단 시작하기",
   },
 } as const;

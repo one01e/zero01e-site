@@ -1,17 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 
 const navItems = [
   { name: "홈", path: "/" },
   { name: "랩스", path: "/labs" },
-  { name: "커뮤니티", path: "/community" },
+  { name: "클래스", path: "/community" },
   { name: "소개", path: "/about" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -44,17 +47,56 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center">
-          <a
-            href="https://forms.gle/nqjTi3Uoybi8KxwL7"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-500/20 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/30"
-          >
-            무료 진단 신청
-          </a>
-        </div>
+        <button
+          type="button"
+          aria-label={isMobileMenuOpen ? "모바일 메뉴 닫기" : "모바일 메뉴 열기"}
+          className="rounded-xl border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 md:hidden"
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+        >
+          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      <div
+        className={`fixed inset-0 z-40 bg-slate-900/30 transition-opacity duration-300 md:hidden ${
+          isMobileMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+      <aside
+        className={`fixed right-0 top-0 z-50 h-screen w-[78%] max-w-xs border-l border-slate-200 bg-white p-6 shadow-2xl transition-transform duration-300 md:hidden ${
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="mb-8 flex items-center justify-between">
+          <span className="text-sm font-extrabold tracking-tight text-slate-900">
+            ZERO<span className="text-emerald-500">01E</span> 메뉴
+          </span>
+          <button
+            type="button"
+            aria-label="모바일 메뉴 닫기"
+            className="rounded-lg border border-slate-200 p-1.5 text-slate-700 transition hover:bg-slate-50"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <nav className="flex flex-col gap-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.path}
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-current={isActive(item.path) ? "page" : undefined}
+              className={`rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                isActive(item.path) ? "bg-emerald-50 text-emerald-700" : "text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+      </aside>
     </header>
   );
 }

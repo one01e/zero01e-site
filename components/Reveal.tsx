@@ -9,7 +9,10 @@ type RevealProps = {
 
 export default function Reveal({ children, className }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
 
   useEffect(() => {
     const element = ref.current;
@@ -17,7 +20,6 @@ export default function Reveal({ children, className }: RevealProps) {
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
-      setIsVisible(true);
       return;
     }
 
